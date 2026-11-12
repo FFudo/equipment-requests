@@ -1,0 +1,26 @@
+### List equipment
+
+GET http://localhost:4004/odata/v4/request/Equipment
+
+### Post equipment
+POST http://localhost:4004/odata/v4/request/Equipment
+Content-Type: application/json
+
+{
+  "name": "Dell Laptop",
+  "stock": 4
+}
+
+###
+GET http://localhost:4004/odata/v4/request/Requests
+
+
+### Create request
+POST http://localhost:4004/odata/v4/request/Requests
+Content-Type: application/json
+
+{
+  "equipment_ID": "11111111-1111-1111-1111-111111111111",
+  "quantity": 2,
+  "reason": "Needed for new employer"
+}
