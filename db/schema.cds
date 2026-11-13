@@ -7,9 +7,9 @@ using {
 
 type RequestStatus : String enum {
   New;
+  Submitted;
   Approved;
   Rejected;
-  Fullfilled;
 }
 
 entity Equipment : cuid, managed {
@@ -18,8 +18,9 @@ entity Equipment : cuid, managed {
 }
 
 entity Request : cuid, managed {
-  equipment : Association to Equipment @mandatory;
-  quantity  : Integer default 1;
-  reason    : String(500);
-  status    : RequestStatus default 'New';
+  equipment       : Association to Equipment @mandatory;
+  quantity        : Integer default 1;
+  reason          : String(500);
+  status          : RequestStatus default 'New';
+  rejectionReason : String(250);
 }
