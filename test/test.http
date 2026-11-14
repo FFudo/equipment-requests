@@ -1,26 +1,57 @@
+@host = http://localhost:4004/odata/v4/request
+
+### Create equipment
+# @name createEquipment
+POST {{host}}/Equipment
+Content-Type: application/json
+
+{ "name": "MacBook Pro 14", "stock": 10 }
+
 ### List equipment
+GET {{host}}/Equipment
 
-GET http://localhost:4004/odata/v4/request/Equipment
 
-### Post equipment
-POST http://localhost:4004/odata/v4/request/Equipment
+### Create a request (status should be "New")
+# @name createRequest
+POST {{host}}/Requests
 Content-Type: application/json
 
 {
-  "name": "Dell Laptop",
-  "stock": 4
+  "equipment_ID": "{{createEquipment.response.body.ID}}",
+  "quantity": 1,
+  "reason": "New hire laptop"
 }
 
-###
-GET http://localhost:4004/odata/v4/request/Requests
-
-
-### Create request
-POST http://localhost:4004/odata/v4/request/Requests
+### Create a submit request
+POST {{host}}/Requests({{createRequest.response.body.ID}})/RequestService.submit
 Content-Type: application/json
 
-{
-  "equipment_ID": "11111111-1111-1111-1111-111111111111",
-  "quantity": 2,
-  "reason": "Needed for new employer"
-}
+{}
+
+### List requests
+Get {{host}}/Requests
+
+### Create a reject request with no reason
+POST {{host}}/Requests({{createRequest.response.body.ID}})/RequestService.reject
+Content-Type: application/json
+
+{}
+
+### Create a approve request
+POST {{host}}/Requests({{createRequest.response.body.ID}})/RequestService.approve
+Content-Type: application/json
+
+{}
+
+### Create a reject request with reason
+POST {{host}}/Requests({{createRequest.response.body.ID}})/RequestService.reject
+Content-Type: application/json
+
+{ "reason": "Too late" }
+
+
+### Create a new request with sstatus new (should be ignored)
+PATCH {{host}}/Requests({{createRequest.response.body.ID}})
+Content-Type: application/json
+
+{ "status": "New" }
