@@ -4,17 +4,19 @@
 # @name createEquipment
 POST {{host}}/Equipment
 Content-Type: application/json
+Authorization: Basic carol:carol
 
 { "name": "MacBook Pro 14", "stock": 10 }
 
 ### List equipment
 GET {{host}}/Equipment
-
+Authorization: Basic carol:carol
 
 ### Create a request (status should be "New")
 # @name createRequest
 POST {{host}}/Requests
 Content-Type: application/json
+Authorization: Basic alice:alice
 
 {
   "equipment_ID": "{{createEquipment.response.body.ID}}",
@@ -22,36 +24,49 @@ Content-Type: application/json
   "reason": "New hire laptop"
 }
 
-### Create a submit request
+### List requests from alice
+Get {{host}}/Requests
+Authorization: Basic alice:alice
+
+### employee submits own request
 POST {{host}}/Requests({{createRequest.response.body.ID}})/RequestService.submit
 Content-Type: application/json
+Authorization: Basic alice:alice
 
 {}
 
-### List requests
-Get {{host}}/Requests
-
-### Create a reject request with no reason
-POST {{host}}/Requests({{createRequest.response.body.ID}})/RequestService.reject
-Content-Type: application/json
-
-{}
-
-### Create a approve request
+### employee approves own request (403 forbidden)
 POST {{host}}/Requests({{createRequest.response.body.ID}})/RequestService.approve
 Content-Type: application/json
+Authorization: Basic alice:alice
 
 {}
 
-### Create a reject request with reason
-POST {{host}}/Requests({{createRequest.response.body.ID}})/RequestService.reject
+### employee tries to create equipment (403)
+POST {{host}}/Equipment
 Content-Type: application/json
+Authorization: Basic alice:alice
 
-{ "reason": "Too late" }
+{ "name": "Hacked item", "stock": 999 }
 
+### manager sees alls requests
+GET {{host}}/Requests
+Authorization: Basic bob:bob
 
-### Create a new request with sstatus new (should be ignored)
-PATCH {{host}}/Requests({{createRequest.response.body.ID}})
+### manager tries to create a request (403)
+POST {{host}}/Requests
 Content-Type: application/json
+Authorization: Basic bob:bob
 
-{ "status": "New" }
+{ "equipment_ID": "{{createEquipment.response.body.ID}}", "quantity": 1, "reason": "Nope" }
+
+### manager approves (200, status "Approved")
+POST {{host}}/Requests({{createRequest.response.body.ID}})/RequestService.approve
+Content-Type: application/json
+Authorization: Basic bob:bob
+
+{}
+
+### wrong user (401)
+GET {{host}}/Requests
+Authorization: Basic eve:eve
