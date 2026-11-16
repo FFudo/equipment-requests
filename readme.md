@@ -1,22 +1,44 @@
-# Getting Started
+![CI](https://github.com/FFudo/equipment-requests/actions/workflows/ci.yml/badge.svg)
 
-Welcome to your new CAP project.
+# Equipment Requests (SAP CAP)
 
-It contains these folders and files, following our recommended project layout:
+## What is it?
 
-File or Folder | Purpose
----------|----------
-`app/` | content for UI frontends goes here
-`db/` | your domain models and data go here
-`srv/` | your service models and code go here
-`readme.md` | this getting started guide
+This is a learning project to learn SAP CAP. The project demonstrates a simple application
+with which employees can request equipment and managers can approve or reject it. It uses roles and statuses to showcase
+how a company could manage equipment requests in their facility.
 
-## Next Steps
+## Status flow
 
-- Open a new terminal and run `cds watch`
-- (in VS Code simply choose _**Terminal** > Run Task > cds watch_)
-- Start with your domain model, in a CDS file in `db/`
+```mermaid
+flowchart LR
 
-## Learn More
+A(New) --> B(Submitted)
+B --> C(Approved)
+B --> D(Rejected)
+```
 
-Learn more at <https://cap.cloud.sap>.
+## Roles
+
+| Role     | Rights                                                            | User  | password |
+| -------- | ----------------------------------------------------------------- | ----- | -------- |
+| Employee | create requests, read own requests, submit request, see equipment | alice | alice    |
+| Manager  | see all requests, approve/reject requests, see equipment          | bob   | bob      |
+| Admin    | everything                                                        | carol | carol    |
+
+## How to run
+
+```sh
+npm install
+npm run watch
+npm test
+```
+
+Manual HTTP tests can be found in `test/test.http`.
+
+## Design choices
+
+Approval uses a conditional DB check with `UPDATE ... where stock >= quantity`. This is so
+that no race condition happens. If the stock is read first and then written, it could happen that in the time between those actions, the stock changes. Race condition.
+
+Secondly, a check for the user was implemented, so that an employee can only see their own requests. This was done via a `@restict` rule wiht `where: 'createdBy = $user'.`.
