@@ -1,0 +1,6 @@
+ID;equipment_ID;quantity;reason;status;rejectionReason;createdBy;modifiedBy
+12be7037-a52d-474c-8a91-33fd7038b5a3;1666304b-dfea-4d5a-a5be-9325864fccb8;1;Keyboard for home office;New;;alice;alice
+89e86d67-4ee4-4805-b73a-6827586b735c;86418618-be80-4d1b-9027-156d04011a38;1;New hire laptop;Submitted;;alice;alice
+e5b219c5-4e74-4c1c-8e73-60409b2330e9;23933532-953a-4773-bcc5-ea9c4a3a593c;3;Phones for the sales team;Submitted;;alice;alice
+1b4359d6-fc15-4121-985e-2198b697b964;8c89738b-1224-48e2-8a76-163dfb2a62f9;2;Dual monitor setup;Approved;;alice;bob
+559edec3-7dd1-4206-98a1-6106d843f4d5;86418618-be80-4d1b-9027-156d04011a38;5;Spare laptops just in case;Rejected;No concrete need, request again when there are new hires.;alice;bob
