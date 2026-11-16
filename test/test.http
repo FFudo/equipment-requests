@@ -1,6 +1,6 @@
 @host = http://localhost:4004/odata/v4/request
 
-### Create equipment
+### 1. Admin creates equipment (201)
 # @name createEquipment
 POST {{host}}/Equipment
 Content-Type: application/json
@@ -8,11 +8,11 @@ Authorization: Basic carol:carol
 
 { "name": "MacBook Pro 14", "stock": 10 }
 
-### List equipment
+### 2. Admin lists equipment (200)
 GET {{host}}/Equipment
 Authorization: Basic carol:carol
 
-### Create a request (status should be "New")
+### 3. Employee creates a request (201, status "New")
 # @name createRequest
 POST {{host}}/Requests
 Content-Type: application/json
@@ -24,49 +24,105 @@ Authorization: Basic alice:alice
   "reason": "New hire laptop"
 }
 
-### List requests from alice
-Get {{host}}/Requests
+### 4. Employee lists own requests (200)
+GET {{host}}/Requests
 Authorization: Basic alice:alice
 
-### employee submits own request
+### 5. Employee submits own request (200, status "Submitted")
 POST {{host}}/Requests({{createRequest.response.body.ID}})/RequestService.submit
 Content-Type: application/json
 Authorization: Basic alice:alice
 
 {}
 
-### employee approves own request (403 forbidden)
+### 6. Employee approves own request (403)
 POST {{host}}/Requests({{createRequest.response.body.ID}})/RequestService.approve
 Content-Type: application/json
 Authorization: Basic alice:alice
 
 {}
 
-### employee tries to create equipment (403)
+### 7. Employee tries to create equipment (403)
 POST {{host}}/Equipment
 Content-Type: application/json
 Authorization: Basic alice:alice
 
 { "name": "Hacked item", "stock": 999 }
 
-### manager sees alls requests
+### 8. Manager sees all requests (200)
 GET {{host}}/Requests
 Authorization: Basic bob:bob
 
-### manager tries to create a request (403)
+### 9. Manager tries to create a request (403)
 POST {{host}}/Requests
 Content-Type: application/json
 Authorization: Basic bob:bob
 
 { "equipment_ID": "{{createEquipment.response.body.ID}}", "quantity": 1, "reason": "Nope" }
 
-### manager approves (200, status "Approved")
+### 10. Manager approves (200, status "Approved")
 POST {{host}}/Requests({{createRequest.response.body.ID}})/RequestService.approve
 Content-Type: application/json
 Authorization: Basic bob:bob
 
 {}
 
-### wrong user (401)
+### 11. Unknown user (401)
 GET {{host}}/Requests
 Authorization: Basic eve:eve
+
+### 12. Quantity 0 (400, assert.range)
+POST {{host}}/Requests
+Content-Type: application/json
+Authorization: Basic alice:alice
+
+{ "equipment_ID": "{{createEquipment.response.body.ID}}", "quantity": 0, "reason": "Bad" }
+
+### 13. Request more than stock (201)
+# @name bigRequest
+POST {{host}}/Requests
+Content-Type: application/json
+Authorization: Basic alice:alice
+
+{ "equipment_ID": "{{createEquipment.response.body.ID}}", "quantity": 50, "reason": "Too many" }
+
+### 14. Submit the big request (200)
+POST {{host}}/Requests({{bigRequest.response.body.ID}})/RequestService.submit
+Content-Type: application/json
+Authorization: Basic alice:alice
+
+{}
+
+### 15. Manager approves big request (409, not enough stock)
+POST {{host}}/Requests({{bigRequest.response.body.ID}})/RequestService.approve
+Content-Type: application/json
+Authorization: Basic bob:bob
+
+{}
+
+### 16. Edit after submit (400)
+PATCH {{host}}/Requests({{bigRequest.response.body.ID}})
+Content-Type: application/json
+Authorization: Basic alice:alice
+
+{ "reason": "Sneaky edit" }
+
+### 17. Check stock after approval in step 10 (200, stock 9)
+GET {{host}}/Equipment({{createEquipment.response.body.ID}})
+Authorization: Basic alice:alice
+
+### 18. Manager rejects without reason (400, no reason)
+POST {{host}}/Requests({{bigRequest.response.body.ID}})/RequestService.reject
+Content-Type: application/json
+Authorization: Basic bob:bob
+
+{}
+
+### 19. Manager rejects with reason (200)
+POST {{host}}/Requests({{bigRequest.response.body.ID}})/RequestService.reject
+Content-Type: application/json
+Authorization: Basic bob:bob
+
+{
+  "reason": "Needs more explanation for need."
+}

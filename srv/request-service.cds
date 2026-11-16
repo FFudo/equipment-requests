@@ -58,3 +58,10 @@ annotate RequestService.Requests with {
   status          @readonly;
   rejectionReason @readonly;
 };
+
+annotate RequestService.Requests with {
+  quantity @assert.range: [
+    1,
+    100
+  ];
+};
