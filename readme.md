@@ -20,7 +20,7 @@ B --> D(Rejected)
 
 ## Roles
 
-| Role     | Rights                                                            | User  | password |
+| Role     | Rights                                                            | User  | Password |
 | -------- | ----------------------------------------------------------------- | ----- | -------- |
 | Employee | create requests, read own requests, submit request, see equipment | alice | alice    |
 | Manager  | see all requests, approve/reject requests, see equipment          | bob   | bob      |
@@ -41,4 +41,4 @@ Manual HTTP tests can be found in `test/test.http`.
 Approval uses a conditional DB check with `UPDATE ... where stock >= quantity`. This is so
 that no race condition happens. If the stock is read first and then written, it could happen that in the time between those actions, the stock changes. Race condition.
 
-Secondly, a check for the user was implemented, so that an employee can only see their own requests. This was done via a `@restict` rule wiht `where: 'createdBy = $user'.`.
+Secondly, a check for the user was implemented, so that an employee can only see their own requests. This was done via a `@restrict` rule with `where: 'createdBy = $user'.`.
