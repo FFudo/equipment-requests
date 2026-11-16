@@ -1,9 +1,6 @@
 namespace equipment.requests;
 
-using {
-  cuid,
-  managed
-} from '@sap/cds/common';
+using {cuid, managed} from '@sap/cds/common';
 
 type RequestStatus : String enum {
   New;
