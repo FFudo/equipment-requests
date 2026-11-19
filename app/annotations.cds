@@ -10,6 +10,24 @@ annotate RequestService.Requests with @(
       Criticality: criticality
     },
     {Value: createdBy},
+    {
+      $Type : 'UI.DataFieldForAction',
+      Action: 'RequestService.submit',
+      Label : 'Submit',
+      Inline: true,
+    },
+    {
+      $Type : 'UI.DataFieldForAction',
+      Action: 'RequestService.approve',
+      Label : 'Approve',
+      Inline: true,
+    },
+    {
+      $Type : 'UI.DataFieldForAction',
+      Action: 'RequestService.reject',
+      Label : 'Reject',
+      Inline: true,
+    },
   ],
   UI.SelectionFields     : [
     status,
@@ -60,6 +78,23 @@ annotate RequestService.Requests with @(
       Target: '@UI.FieldGroup#Admin',
     },
   ],
+  UI.Identification      : [
+    {
+      $Type : 'UI.DataFieldForAction',
+      Action: 'RequestService.submit',
+      Label : 'Submit',
+    },
+    {
+      $Type : 'UI.DataFieldForAction',
+      Action: 'RequestService.approve',
+      Label : 'Approve',
+    },
+    {
+      $Type : 'UI.DataFieldForAction',
+      Action: 'RequestService.reject',
+      Label : 'Reject',
+    },
+  ],
 );
 
 annotate RequestService.Requests with {
@@ -107,3 +142,12 @@ annotate RequestService.Requests with {
 annotate RequestService.Equipment with {
   name @title: 'Equipment'
 }
+
+annotate RequestService.Requests with actions {
+  @Core.OperationAvailable: ($self.status = 'New')
+  submit;
+  @Core.OperationAvailable: ($self.status = 'Submitted')
+  approve;
+  @Core.OperationAvailable: ($self.status = 'Submitted')
+  reject(reason @title: 'Rejection Reason' );
+};
