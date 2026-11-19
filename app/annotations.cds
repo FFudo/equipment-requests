@@ -5,7 +5,10 @@ annotate RequestService.Requests with @(
     {Value: equipment_ID},
     {Value: quantity},
     {Value: reason},
-    {Value: status},
+    {
+      Value      : status,
+      Criticality: criticality
+    },
     {Value: createdBy},
   ],
   UI.SelectionFields     : [
@@ -25,7 +28,10 @@ annotate RequestService.Requests with @(
     {Value: reason}
   ], },
   UI.FieldGroup #Decision: {Data: [
-    {Value: status},
+    {
+      Value      : status,
+      Criticality: criticality
+    },
     {Value: rejectionReason},
   ], },
   UI.FieldGroup #Admin   : {Data: [
@@ -94,7 +100,8 @@ annotate RequestService.Requests with {
       }],
     },
     ValueListWithFixedValues,
-  }
+  };
+  criticality     @UI.Hidden;
 }
 
 annotate RequestService.Equipment with {

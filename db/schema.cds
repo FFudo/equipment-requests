@@ -20,6 +20,18 @@ entity Request : cuid, managed {
   reason          : String(500);
   status          : RequestStatus default 'New';
   rejectionReason : String(250);
+  criticality     : Integer = case
+                                status
+                                when 'Approved'
+                                     then 3
+                                when 'Submitted'
+                                     then 2
+                                when 'Rejected'
+                                     then 1
+                                when 'New'
+                                     then 0
+                                else 0
+                              end;
 }
 
 entity Statuses {
