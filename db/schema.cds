@@ -21,3 +21,7 @@ entity Request : cuid, managed {
   status          : RequestStatus default 'New';
   rejectionReason : String(250);
 }
+
+entity Statuses {
+  key code : RequestStatus;
+}

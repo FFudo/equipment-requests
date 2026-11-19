@@ -2,6 +2,7 @@ using equipment.requests as db from '../db/schema';
 
 service RequestService {
   entity Equipment as projection on db.Equipment;
+  entity Statuses  as projection on db.Statuses;
 
   entity Requests  as projection on db.Request
     actions {
@@ -53,6 +54,13 @@ annotate RequestService.Equipment with @(restrict: [
     to   : 'Admin'
   }
 ]);
+
+annotate RequestService.Statuses with  @readonly  @requires: [
+  'Employee',
+  'Manager',
+  'Admin'
+];
+
 
 annotate RequestService.Requests with {
   status          @readonly;

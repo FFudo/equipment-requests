@@ -2,7 +2,7 @@ using RequestService from '../srv/request-service';
 
 annotate RequestService.Requests with @(
   UI.LineItem            : [
-    {Value: equipment.name},
+    {Value: equipment_ID},
     {Value: quantity},
     {Value: reason},
     {Value: status},
@@ -10,16 +10,17 @@ annotate RequestService.Requests with @(
   ],
   UI.SelectionFields     : [
     status,
-    createdBy
+    createdBy,
+    equipment_ID
   ],
   UI.HeaderInfo          : {
     TypeName      : 'Request',
     TypeNamePlural: 'Requests',
-    Title         : {Value: equipment.name},
+    Title         : {Value: equipment_ID},
     Description   : {Value: createdBy},
   },
   UI.FieldGroup #General : {Data: [
-    {Value: equipment.name},
+    {Value: equipment_ID},
     {Value: quantity},
     {Value: reason}
   ], },
@@ -57,12 +58,45 @@ annotate RequestService.Requests with @(
 
 annotate RequestService.Requests with {
   reason          @title: 'Reason';
-  status          @title: 'Status';
   quantity        @title: 'Quantity';
-  equipment       @title: 'Equipment';
+  equipment       @title : 'Equipment'
+                  @Common: {
+    Text           : equipment.name,
+    TextArrangement: #TextOnly,
+    ValueList      : {
+      CollectionPath: 'Equipment',
+      Parameters    : [
+        {
+          $Type            : 'Common.ValueListParameterInOut',
+          LocalDataProperty: equipment_ID,
+          ValueListProperty: 'ID',
+        },
+        {
+          $Type            : 'Common.ValueListParameterDisplayOnly',
+          ValueListProperty: 'name',
+        },
+        {
+          $Type            : 'Common.ValueListParameterDisplayOnly',
+          ValueListProperty: 'stock',
+        },
+      ],
+    }
+  };
   rejectionReason @title: 'Rejection Reason';
+  status          @title : 'Status'
+                  @Common: {
+    ValueList: {
+      CollectionPath: 'Statuses',
+      Parameters    : [{
+        $Type            : 'Common.ValueListParameterInOut',
+        LocalDataProperty: status,
+        ValueListProperty: 'code',
+      }],
+    },
+    ValueListWithFixedValues,
+  }
 }
 
 annotate RequestService.Equipment with {
-  name @title: 'Equipment';
+  name @title: 'Equipment'
 }
