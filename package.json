@@ -15,7 +15,7 @@
   "scripts": {
     "start": "cds-serve",
     "watch": "cds watch",
-    "test": "CDS_PLUGIN_UI5_ACTIVE=false node --test test/",
+    "test": "CDS_PLUGIN_UI5_ACTIVE=false node --test test/*.test.js",
     "lint": "eslint .",
     "watch-requests": "cds watch --open requests/index.html?sap-ui-xx-viewCache=false --livereload false"
   },
